@@ -1,6 +1,12 @@
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate bincode;
+
 use std::path::Path;
 
 mod fs;
+mod packets;
 use fs::walk_files;
 
 fn main() {
