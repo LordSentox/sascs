@@ -4,7 +4,10 @@ use std::net::TcpStream;
 use std::io::{Read, Write};
 use std::io;
 
-use std::time::SystemTime;
+use super::machine::Machine;
+
+pub type ClientId = u32;
+pub use std::u32::MAX as ClientIdMAX;
 
 pub const MAX_PACKET_SIZE: u64 = 512;
 
@@ -22,8 +25,11 @@ pub enum PacketReadError {
 pub enum Packet {
 	/// Request the current system time of the target machine.
 	ReqTime,
-	/// Sends the current system time of oneself.
-	Time(SystemTime)
+	/// Sends basic information about the machine and its file system state so
+	/// that it can be compared to others.
+	MachineState(Machine),
+	/// An internal Packet to show that the connection has been closed by the client.
+	Disconnect
 }
 
 impl Packet {
