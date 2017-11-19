@@ -32,16 +32,16 @@ pub enum Packet {
 	Disconnect
 }
 
-impl Packet {
-	pub fn write_to_stream(&self, stream: &mut TcpStream) -> bool {
+pub trait PacketWrite: io::Write {
+	fn write_packet(&mut self, p: &Packet) -> bool {
 		let size = Bounded(MAX_PACKET_SIZE);
 
-		let data: Vec<u8> = match serialize(&self, size) {
+		let data: Vec<u8> = match serialize(&p, size) {
 			Ok(data) => data,
 			Err(err) => { println!("Error serialising packet: {}", err); return false; }
 		};
 
-		match stream.write(&data) {
+		match self.write(&data) {
 			Ok(len) => {
 				assert!(len <= MAX_PACKET_SIZE as usize);
 				true
@@ -52,15 +52,13 @@ impl Packet {
 			}
 		}
 	}
+}
 
-	// TODO: Later, the buffer could be borrowed, which would increase performance.
-	// This has to be crosschecked with the inner workings of bytecode, however.
-	/// Read a packet from the stream. This returns a packet, in case one could be read
-	/// in conjunction with a bool stating false, in case the stream has been closed.
-	pub fn read_from_stream(stream: &mut TcpStream) -> Result<Packet, PacketReadError> {
+pub trait PacketRead: io::Read {
+	fn read_packet(&mut self) -> Result<Packet, PacketReadError> {
 		let mut data: Vec<u8> = vec![0; MAX_PACKET_SIZE as usize];
 
-		match stream.read(&mut data) {
+		match self.read(&mut data) {
 			Ok(len) => {
 				if len == 0 {
 					Err(PacketReadError::Closed)
@@ -80,3 +78,6 @@ impl Packet {
 		}
 	}
 }
+
+impl PacketWrite for TcpStream {}
+impl PacketRead for TcpStream {}

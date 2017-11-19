@@ -60,13 +60,13 @@ impl Remote {
 	/// Returns the packet if available and false, in case the stream has been
 	/// closed.
 	pub fn read_packet(&self) -> Result<Packet, PacketReadError> {
-		Packet::read_from_stream(&mut self.read.lock().unwrap())
+		self.read.lock().unwrap().read_packet()
 	}
 
 	/// Write the packet to the stream. Returns true if successful,
 	/// false if an error occured.
 	pub fn write_packet(&self, p: &Packet) -> bool {
-		p.write_to_stream(&mut self.write.lock().unwrap())
+		self.write.lock().unwrap().write_packet(&p)
 	}
 
 	/// Shuts down the connection. After this it will be impossible to send
