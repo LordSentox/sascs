@@ -1,13 +1,13 @@
 use packets::*;
 use remote::Remote;
 use super::netclient::NetClient;
-use super::packethandler::PacketHandler;
+use packethandler::PacketHandler;
 
 use std::thread;
 use std::sync::mpsc::{self, Sender, Receiver};
 use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4, TcpListener};
-use std::collections::{HashMap, VecDeque};
+use std::collections::HashMap;
 use std::io::Error as IOError;
 
 /// Look for any id that has not been given to a client. Optionally, a starting
@@ -109,7 +109,7 @@ impl NetHandler {
 		// that has come later first.
 		let packets = self.rx.try_iter().collect();
 
-		handler.handle(&self, &packets);
+		handler.handle(&packets);
 
 		// Remove clients where the other end has hung up.
 		for (c, p) in packets {

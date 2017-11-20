@@ -3,7 +3,17 @@ name = "sascs"
 version = "0.1.0"
 authors = ["Arne Dussin <arne.dussin@live.de>"]
 
+[[bin]]
+name = "server"
+path = "src/server.rs"
+
+[[bin]]
+name = "client"
+path = "src/client.rs"
+
 [dependencies]
 bincode = "*"
 serde = "*"
 serde_derive = "*"
+argparse = "*"
+chrono = "*"

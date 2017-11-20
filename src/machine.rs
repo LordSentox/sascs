@@ -31,6 +31,13 @@ impl Machine {
 		}
 	}
 
+	pub fn now_with_fs(fs: Vec<(PathBuf, SystemTime)>) -> Machine {
+		Machine {
+			time: SystemTime::now(),
+			fs: fs
+		}
+	}
+
 	/// Campare the file system state of this machine to the state of the other
 	/// machine. Returns all the files that are newer on the other Machine.
 	pub fn newer_files_from(&self, other: &Machine) -> Vec<(PathBuf, SystemTime)> {
