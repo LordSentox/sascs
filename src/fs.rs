@@ -41,11 +41,12 @@ pub fn with_modified_time(fs: Vec<PathBuf>) -> IOResult<Vec<(PathBuf, SystemTime
 }
 
 #[cfg(unix)]
-pub fn set_modified<P: AsRef<Path>, Tz: TimeZone>(f: P, time: &SystemTime) -> bool where Tz::Offset: Display {
+pub fn set_modified<P: AsRef<Path>>(f: P, time: &SystemTime) -> bool {
+	let time: DateTime<Local> = time.clone().into();
 	// touch -m -t 198801010000.00 hello
 	Command::new("touch")
 		.arg("-m")
-		.arg("-t").arg(DateTime<Local>::from(time).format("%Y%m%d%H%M.%S").to_string())
+		.arg("-t").arg(time.format("%Y%m%d%H%M.%S").to_string())
 		.arg(f.as_ref())
 		.status().unwrap().success()
 }
