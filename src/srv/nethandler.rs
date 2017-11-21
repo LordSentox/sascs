@@ -1,7 +1,6 @@
 use packets::*;
 use remote::Remote;
 use super::netclient::NetClient;
-use packethandler::PacketHandler;
 
 use std::thread;
 use std::sync::mpsc::{self, Sender, Receiver};
@@ -104,18 +103,17 @@ impl NetHandler {
 		Ok(())
 	}
 
-	pub fn handle_packets<H>(&self, handler: &mut H) where H: PacketHandler {
-		// Collect all packets into a Vec and send that to the PacketHandler
+	pub fn collect_packets(&self) -> Vec<(ClientId, Packet)> {
 		let packets = self.rx.try_iter().collect();
 
-		handler.handle(&packets);
-
 		// Remove clients where the other end has hung up.
-		for (c, p) in packets {
-			if let Packet::Disconnect = p {
+		for &(ref c, ref p) in &packets {
+			if let &Packet::Disconnect = p {
 				self.clients.write().unwrap().remove(&c);
 			}
 		}
+
+		packets
 	}
 
 	pub fn broadcast(&self, packet: &Packet) -> bool {

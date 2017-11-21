@@ -6,6 +6,9 @@ use std::process::Command;
 use chrono::DateTime;
 use chrono::prelude::*;
 
+// Reexport from the std-module fs.
+pub use std::fs::*;
+
 /// Walk through the directory and return all files with their respective
 /// paths relative to the path provided.
 pub fn walk_files<P: AsRef<Path>>(p: P) -> IOResult<Vec<PathBuf>> {

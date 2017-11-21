@@ -5,6 +5,7 @@ use std::io::{Read, Write};
 use std::io;
 
 use super::machine::Machine;
+use std::path::PathBuf;
 
 pub type ClientId = u32;
 pub use std::u32::MAX as ClientIdMAX;
@@ -25,9 +26,20 @@ pub enum PacketReadError {
 pub enum Packet {
 	/// Request the current system time of the target machine.
 	ReqTime,
-	/// Sends basic information about the machine and its file system state so
-	/// that it can be compared to others.
-	MachineState(Machine),
+	/// Make a pull-request to the file server. The server will then in turn
+	/// request files that are newer on the machine that made the request.
+	ReqPull(Machine),
+	/// Request a file to be sent.
+	ReqFile(PathBuf),
+	/// Indicates that a file is about to be sent. Sends basic information
+	/// about the file that might be useful.
+	/// The files path, the files size (in bytes)
+	FileStart(PathBuf, u64),
+	/// Send parts of a file. It is important that these are used in the
+	/// strict order they are sent in.
+	FileChunk(Vec<u8>),
+	/// Marks the end of a file transmission.
+	FileEnd,
 	/// An internal Packet to show that the connection has been closed by the client.
 	Disconnect
 }

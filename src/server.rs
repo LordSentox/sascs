@@ -14,14 +14,12 @@ use std::time::Duration;
 
 mod fs;
 mod packets;
-mod packethandler;
 mod machine;
 mod remote;
 mod srv;
 
 use fs::walk_files;
 use srv::NetHandler;
-use srv::PacketHandler;
 use machine::Machine;
 
 fn main() {
@@ -43,8 +41,8 @@ fn main() {
 		let fs = fs::with_modified_time(fs).expect("Could not read time metadata");
 		let machine = Machine::now_with_fs(fs);
 
-		let mut handler = PacketHandler::new(machine);
-		nethandler.handle_packets(&mut handler);
+		for (c, p) in nethandler.collect_packets() {
+		}
 
 		thread::sleep(Duration::from_millis(5000));
 	}
