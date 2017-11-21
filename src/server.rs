@@ -25,7 +25,7 @@ use srv::PacketHandler;
 use machine::Machine;
 
 fn main() {
-	let mut home_dir = Path::new("~/Code");
+	let mut home_dir = Path::new(".");
 	let mut port = 44942;
 	{
 		let mut ap = ArgumentParser::new();
