@@ -21,7 +21,7 @@ mod srv;
 
 use fs::walk_files;
 use srv::NetHandler;
-use srv::FileServer;
+use srv::PacketHandler;
 use machine::Machine;
 
 fn main() {
@@ -43,7 +43,7 @@ fn main() {
 		let fs = fs::with_modified_time(fs).expect("Could not read time metadata");
 		let machine = Machine::now_with_fs(fs);
 
-		let mut handler = FileServer::new(machine);
+		let mut handler = PacketHandler::new(machine);
 		nethandler.handle_packets(&mut handler);
 
 		thread::sleep(Duration::from_millis(5000));

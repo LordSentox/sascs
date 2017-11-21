@@ -3,10 +3,8 @@ use std::fs;
 use std::io::Result as IOResult;
 use std::time::SystemTime;
 use std::process::Command;
-use chrono::{DateTime, TimeZone};
+use chrono::DateTime;
 use chrono::prelude::*;
-use std::fmt::Display;
-
 
 /// Walk through the directory and return all files with their respective
 /// paths relative to the path provided.
@@ -123,8 +121,12 @@ mod test {
 
 		let with_mod = with_modified_time(files.clone()).unwrap();
 
-		for (left, right) in files.into_iter().zip(times).zip(with_mod) {
-			assert_eq!(left, right);
+		for ((lp, lt), (rp, rt)) in files.into_iter().zip(times).zip(with_mod) {
+			let lt: DateTime<Local> = lt.into();
+			let rt: DateTime<Local> = rt.into();
+
+			// Using timestamp to ignore nanoseconds, which can't be set by touch.
+			assert_eq!((lp, lt.timestamp()), (rp, rt.timestamp()));
 		}
 
 		fs::remove_dir_all("./.test_dir3").unwrap();

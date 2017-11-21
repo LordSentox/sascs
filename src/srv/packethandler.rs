@@ -1,23 +1,23 @@
-use packethandler::PacketHandler;
+use packethandler::PacketHandler as PH;
 use super::nethandler::NetHandler;
 use machine::Machine;
 use packets::*;
 
-pub struct FileServer {
+pub struct PacketHandler {
 	/// The machine this fileserver is running on.
 	machine: Machine
 }
 
-impl FileServer {
-	pub fn new(machine: Machine) -> FileServer {
-		FileServer {
+impl PacketHandler {
+	pub fn new(machine: Machine) -> PacketHandler {
+		PacketHandler {
 			machine: machine
 		}
 	}
 }
 
-impl PacketHandler for FileServer {
-	fn handle(&self, packets: &Vec<(ClientId, Packet)>) {
+impl PH for PacketHandler {
+	fn handle(&mut self, packets: &Vec<(ClientId, Packet)>) {
 		for p in packets {
 			println!("Received packet: {:?}", p);
 		}
