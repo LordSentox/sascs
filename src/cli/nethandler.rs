@@ -1,5 +1,6 @@
 use remote::*;
 use packets::*;
+use packethandler::PacketHandler;
 use std::sync::mpsc::{self, Receiver};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -61,6 +62,13 @@ impl NetHandler {
 			rx: rx,
 			running: running
 		}
+	}
+
+	pub fn handle_packets<H>(&self, handler: &mut H) where H: PacketHandler {
+		// Collect all packets into a Vec and send that to the PacketHandler.
+		let packets = self.rx.try_iter().map(|x| { (0, x) }).collect();
+
+		handler.handle(&packets);
 	}
 
 	pub fn send(&self, p: &Packet) -> bool {

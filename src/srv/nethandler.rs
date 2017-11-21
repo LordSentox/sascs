@@ -105,8 +105,7 @@ impl NetHandler {
 	}
 
 	pub fn handle_packets<H>(&self, handler: &mut H) where H: PacketHandler {
-		// Collect all packets into a Vec in case the handler needs a packet
-		// that has come later first.
+		// Collect all packets into a Vec and send that to the PacketHandler
 		let packets = self.rx.try_iter().collect();
 
 		handler.handle(&packets);
